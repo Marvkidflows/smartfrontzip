@@ -1,0 +1,29 @@
+# LOCATION: public/.htaccess   (NEW FILE; the same rules were previously only in the project ROOT, which `vite build` does NOT copy into dist/)
+# Hostinger serves the site with Apache/LiteSpeed. The app is a single-page app, so every path that is not a real file (for example
+# /admin/dashboard or /registration/dashboard) must be answered with index.html. Without this file a refresh or a direct link returns a server 404.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# index.html points at hashed asset files that change on every build. If a browser or CDN keeps an OLD index.html it asks for files that no longer
+# exist and the page goes blank after a deployment. The hashed assets themselves can be cached for a year; index.html must be revalidated.
+<IfModule mod_headers.c>
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>

@@ -1,0 +1,32 @@
+/* Conversation view shared by the MarvFlow "Sent" page and the SSI inbox. Mobile-first, nothing fixed-width. */
+.mft { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.mft__list { display: flex; flex-direction: column; gap: 10px; }
+.mft__msg { border: 1px solid var(--gray-200, #e5e7eb); border-radius: 10px; padding: 0.8rem 1rem; min-width: 0; overflow-wrap: anywhere; }
+.mft__msg--ssi { border-left: 4px solid var(--primary, #2563eb); background: var(--gray-50, #f8fafc); }
+.mft__msg--mf  { border-left: 4px solid var(--warning, #d97706); }
+.mft__head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 0.35rem; }
+.mft__body { margin: 0.25rem 0 0.5rem; }
+.mft__reply { border-top: 1px solid var(--gray-200, #e5e7eb); padding-top: 0.9rem; }
+.mft__reply textarea { resize: vertical; min-height: 76px; width: 100%; }
+@media (max-width: 480px) { .mft__msg { padding: 0.65rem 0.75rem; } }
+
+/* Quick-message chat: an SSI reply sits on the other side of the conversation */
+.mfm-bubble--ssi { align-self: flex-start; }
+.mfm-bubble--ssi .mfm-bubble__text { background: var(--gray-100, #f3f4f6); color: var(--gray-900, #111827); border-radius: 12px 12px 12px 2px; }
+.mfm-bubble--ssi .mfm-bubble__text a { color: var(--primary, #2563eb); }
+.mfm-bubble--ssi .mfm-bubble__meta { text-align: left; }
+
+/* Unread count on a sidebar item (Admin, Financial and MarvFlow layouts all use .adm-nav-item) */
+.adm-nav-badge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #dc2626; color: #fff; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.adm-nav-badge + .adm-chevron { margin-left: 6px; }
+
+/* Quick-message chat: marker between two separate conversations, and the "start a new conversation" notice */
+.mfm-divider { display: flex; align-items: center; gap: 10px; margin: 10px 0; color: var(--gray-500, #6b7280); font-size: 0.75rem; }
+.mfm-divider::before, .mfm-divider::after { content: ''; flex: 1; border-top: 1px solid var(--gray-200, #e5e7eb); }
+.mfm-banner--info { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 0.5rem 0.75rem; border-radius: 8px; background: var(--gray-50, #f8fafc); border: 1px solid var(--gray-200, #e5e7eb); font-size: 0.85rem; }
+.mfm-chat__bar { flex-wrap: wrap; gap: 8px; }
+
+/* Pending-delivery notices (staff view) */
+.mft__pending { margin: 0 0 0.5rem; padding: 0.4rem 0.6rem; border-radius: 6px; background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; font-size: 0.8rem; }
+.mfm-banner--warn { display: flex; gap: 10px; align-items: flex-start; padding: 0.7rem 0.85rem; border-radius: 8px; background: #fffbeb; border: 1px solid #f59e0b; color: #78350f; font-size: 0.88rem; margin-bottom: 0.6rem; }
+@media (prefers-color-scheme: dark) { .mft__pending, .mfm-banner--warn { background: #3b2f0b; border-color: #b45309; color: #fde68a; } }

@@ -1,0 +1,28 @@
+/* Shared by RichComposer and RichText (new file: no existing stylesheet is edited). */
+.rc { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rc .mfm-editor .ql-container, .rc .mfm-editor .ql-editor { min-height: 140px; }
+.rc__foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.rc__count { margin-right: auto; font-size: 0.78rem; color: var(--gray-500, #6b7280); }
+.rc__count--over { color: #dc2626; font-weight: 600; }
+.rc__hint { margin: 0; font-size: 0.75rem; color: var(--gray-500, #6b7280); line-height: 1.4; }
+
+/* How a message body is displayed (works inside chat bubbles, tables of messages and the email viewer). */
+.rt-body { font-size: inherit; line-height: 1.45; overflow-wrap: anywhere; word-break: break-word; min-width: 0; max-width: 100%; }
+.rt-plain { white-space: pre-wrap; }
+.rt-body p { margin: 0; }
+.rt-body ol, .rt-body ul { margin: 0.25rem 0 0.25rem 1.4rem; padding: 0; }
+.rt-body blockquote { margin: 0.25rem 0; padding-left: 0.75rem; border-left: 3px solid rgba(128, 128, 128, 0.4); }
+.rt-body a { text-decoration: underline; }
+.rt-body h1, .rt-body h2, .rt-body h3, .rt-body h4 { margin: 0.5rem 0 0.25rem; line-height: 1.25; }
+.rt-body hr { border: 0; border-top: 1px solid rgba(128, 128, 128, 0.4); margin: 0.6rem 0; }
+.rt-body img { max-width: 100%; height: auto; }
+.rt-body table { border-collapse: collapse; max-width: 100%; }
+.rt-body th, .rt-body td { vertical-align: top; }
+.rt-body .ql-indent-1 { padding-left: 3em; } .rt-body .ql-indent-2 { padding-left: 6em; } .rt-body .ql-indent-3 { padding-left: 9em; }
+.rt-body .ql-indent-4 { padding-left: 12em; } .rt-body .ql-indent-5 { padding-left: 15em; } .rt-body .ql-indent-6 { padding-left: 18em; }
+.rt-body .ql-indent-7 { padding-left: 21em; } .rt-body .ql-indent-8 { padding-left: 24em; }
+/* wide tables scroll inside their own box instead of widening the page */
+.rt-body { overflow-x: auto; }
+
+/* Investor page: the quick-reply bar was a flex row for a textarea + icon button; with the composer it is a plain block. */
+.inv-msg-quick-reply.inv-msg-quick-reply--rich { display: block; padding: 0.5rem; }

@@ -1,0 +1,32 @@
+/* TASK 4 — News & Media presentation (public site, investor dashboard, admin). Uses shared design tokens. */
+.nw-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+.nw-head h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); color: var(--navy, #0F2A6B); margin: 0 0 .4rem; }
+.nw-head p { color: var(--gray-500, #64748B); margin: 0 0 1.25rem; }
+.nw-filters { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; align-items: center; }
+.nw-chip { border: 1px solid var(--gray-200, #E2E8F0); background: #fff; border-radius: 999px; padding: .35rem .9rem; font-size: .8rem; cursor: pointer; color: var(--gray-600, #475569); }
+.nw-chip.active { background: var(--royal, #2552C4); color: #fff; border-color: var(--royal, #2552C4); }
+.nw-search { flex: 1 1 220px; max-width: 320px; }
+.nw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+.nw-card { background: #fff; border: 1px solid var(--gray-200, #E2E8F0); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+.nw-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,42,107,.12); }
+.nw-card__img { aspect-ratio: 16 / 9; background: linear-gradient(135deg, #1A3A8F, #2552C4); position: relative; }
+.nw-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nw-card__play { position: absolute; right: .6rem; bottom: .6rem; background: rgba(0,0,0,.65); color: #fff; font-size: .7rem; padding: .2rem .5rem; border-radius: 6px; }
+.nw-card__body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .45rem; }
+.nw-card__meta { font-size: .72rem; color: var(--gray-500, #64748B); display: flex; gap: .5rem; flex-wrap: wrap; text-transform: uppercase; letter-spacing: .04em; }
+.nw-card h3 { margin: 0; font-size: 1.05rem; color: var(--navy, #0F2A6B); line-height: 1.35; }
+.nw-card p { margin: 0; font-size: .88rem; color: var(--gray-600, #475569); line-height: 1.55; }
+.nw-badge { background: #EEF2FF; color: #3730A3; padding: .1rem .5rem; border-radius: 6px; }
+.nw-badge.investor { background: #FEF3C7; color: #92400E; }
+.nw-feature { grid-column: 1 / -1; }
+.nw-article { max-width: 760px; margin: 0 auto; }
+.nw-article h1 { font-size: clamp(1.6rem, 4.5vw, 2.4rem); color: var(--navy, #0F2A6B); line-height: 1.25; margin: .5rem 0 1rem; }
+.nw-article__cover { width: 100%; border-radius: 14px; margin: 1rem 0; display: block; }
+.nw-body { font-size: 1.02rem; line-height: 1.8; color: #1E293B; overflow-wrap: anywhere; }
+.nw-body img { max-width: 100%; height: auto; }
+.nw-video { position: relative; aspect-ratio: 16 / 9; margin: 1.25rem 0; border-radius: 14px; overflow: hidden; background: #000; }
+.nw-video iframe, .nw-video video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.nw-empty { text-align: center; padding: 3rem 1rem; color: var(--gray-500, #64748B); }
+.nw-pager { display: flex; gap: .6rem; justify-content: center; margin-top: 1.5rem; align-items: center; }
+.nw-back { display: inline-block; margin-bottom: 1rem; color: var(--royal, #2552C4); text-decoration: none; font-size: .9rem; }
+@media (max-width: 560px) { .nw-grid { grid-template-columns: 1fr; } .nw-wrap { padding-top: 1.25rem; } }

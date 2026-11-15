@@ -1,0 +1,27 @@
+/* LOCATION: src/pages/registration/RegistrationPages.css — Task 2. Layered on AdminPages.css; only what that file lacks. */
+.reg-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.6rem; margin-bottom: 1rem; }
+.reg-filters .form-control { width: 100%; }
+.reg-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem; }
+.reg-kpi { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 0.9rem 1rem; }
+.reg-kpi b { display: block; font-size: 1.5rem; color: var(--navy); }
+.reg-kpi span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); font-weight: 600; }
+.reg-kpi--click { cursor: pointer; text-align: left; font: inherit; }
+.reg-kpi--click:hover, .reg-kpi--click:focus-visible { border-color: var(--royal); outline: none; }
+.reg-note { background: var(--info-bg); color: var(--info); border-radius: var(--radius-md); padding: 0.65rem 0.85rem; font-size: 0.82rem; margin-bottom: 1rem; }
+.reg-bars { display: flex; align-items: flex-end; gap: 2px; height: 120px; overflow-x: auto; padding-bottom: 2px; }
+.reg-bar { flex: 1 0 8px; min-width: 8px; display: flex; flex-direction: column; justify-content: flex-end; }
+.reg-bar i { display: block; background: var(--royal); border-radius: 2px 2px 0 0; min-height: 0; }
+.reg-bar i.sub { background: var(--gold, #c9a227); }
+.reg-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.reg-field { margin-bottom: 0.7rem; }
+.reg-field dt { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); font-weight: 600; }
+.reg-field dd { margin: 0.15rem 0 0; font-size: 0.88rem; font-weight: 600; color: var(--gray-800); overflow-wrap: anywhere; }
+.reg-timeline { list-style: none; margin: 0; padding: 0; }
+.reg-timeline li { border-left: 2px solid var(--gray-200); padding: 0 0 0.9rem 0.85rem; position: relative; font-size: 0.84rem; }
+.reg-timeline li::before { content: ''; position: absolute; left: -5px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--royal); }
+.reg-timeline small { color: var(--gray-500); display: block; }
+.reg-docs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.reg-docs img { width: 100%; max-height: 220px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--gray-200); }
+.reg-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.reg-pager { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.9rem; flex-wrap: wrap; }
+@media (max-width: 760px) { .reg-grid2, .reg-docs { grid-template-columns: 1fr; } }

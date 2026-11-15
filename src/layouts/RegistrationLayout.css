@@ -1,0 +1,70 @@
+/* LOCATION: src/layouts/RegistrationLayout.css   (NEW FILE)
+   Additions for RegistrationLayout only. Reuses the existing AdminLayout.css classes and design tokens; nothing in AdminLayout.css is changed. */
+
+/* ── Admin-only "return to Admin" block at the top of the sidebar nav ── */
+.reg-admin-return {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.reg-back-link {
+  color: #fff;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  font-weight: 600;
+}
+.reg-back-link:hover { background: rgba(245, 158, 11, 0.26); color: #fff; }
+.reg-admin-return__note {
+  display: block;
+  margin: 0.35rem 0 0 1rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Top bar: Admin back link (visible with the drawer closed, so it works on a phone) ── */
+.reg-topbar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-md, 8px);
+  background: var(--gray-50, #f8fafc);
+  border: 1px solid var(--gray-200, #e2e8f0);
+  color: var(--gray-700, #334155);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--transition, all 0.15s ease);
+}
+.reg-topbar-back:hover { background: var(--gray-100, #f1f5f9); color: var(--gray-900, #0f172a); }
+
+/* ── Top bar: logout is a <button>, so give it the same look as the icon links ── */
+.reg-topbar-logout {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+.reg-layout .reg-topbar-logout:hover { background: var(--danger-bg, #fee2e2); color: var(--danger, #dc2626); }
+
+/* Keep the long title from forcing the bar to wrap or push the buttons off-screen.
+   Scoped to .reg-layout: Vite bundles CSS globally, so an unscoped .adm-* rule here would also change the Admin/Financial/MarvFlow bars. */
+.reg-layout .adm-topbar__badge { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 900px) {
+  /* 40px minimum tap targets once the sidebar is a drawer */
+  .reg-layout .reg-topbar-back, .reg-layout .adm-topbar-icon { min-height: 40px; min-width: 40px; }
+  .reg-back-link { padding: 0.8rem 1rem; }
+}
+
+@media (max-width: 480px) {
+  /* Phone: collapse the back link to an icon (aria-label + title keep it accessible) and shorten the title. */
+  .reg-topbar-back { padding: 0; justify-content: center; width: 40px; }
+  .reg-topbar-back__label { display: none; }
+  .reg-layout .adm-topbar { padding: 0 0.75rem; gap: 0.5rem; }
+}

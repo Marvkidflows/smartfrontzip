@@ -1,0 +1,41 @@
+/* LOCATION: src/components/common/SearchableCountrySelect.css */
+
+.scs-root { position: relative; flex-shrink: 0; }
+
+.scs-trigger {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: none; border: none; cursor: pointer;
+  padding: 0; font-size: 0.85rem; color: var(--gray-700, #374151);
+  font-family: inherit;
+}
+.scs-trigger:disabled { cursor: not-allowed; opacity: 0.6; }
+.scs-trigger__label { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.scs-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 50;
+  width: 260px; max-height: 320px; display: flex; flex-direction: column;
+  background: white; border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.scs-search {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  color: var(--gray-400, #9ca3af);
+}
+.scs-search input {
+  border: none; outline: none; flex: 1; font-size: 0.85rem;
+  font-family: inherit; color: var(--gray-800, #1f2937);
+}
+
+.scs-list { overflow-y: auto; padding: 0.35rem; }
+.scs-empty { padding: 1rem; text-align: center; font-size: 0.82rem; color: var(--gray-400, #9ca3af); }
+
+.scs-option {
+  display: flex; align-items: center; gap: 0.6rem; width: 100%;
+  padding: 0.5rem 0.6rem; border: none; background: none; border-radius: 6px;
+  font-size: 0.85rem; text-align: left; cursor: pointer; color: var(--gray-700, #374151);
+}
+.scs-option:hover { background: var(--gray-50, #f9fafb); }
+.scs-option.active { background: rgba(26,58,143,0.08); font-weight: 600; }

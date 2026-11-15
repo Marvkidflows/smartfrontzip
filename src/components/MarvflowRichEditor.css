@@ -1,0 +1,75 @@
+/* MarvFlow message composer — extends the existing react-quill (Quill 1.3.7) setup used by the Email Center. */
+.mfm-editor .ql-toolbar { border-radius: 8px 8px 0 0; background: #f8fafc; }
+.mfm-editor .ql-container { border-radius: 0 0 8px 8px; min-height: 220px; font-size: 0.92rem; }
+.mfm-editor .ql-editor { min-height: 220px; line-height: 1.42; }
+.mfm-editor .ql-editor p { margin: 0; }
+
+/* Dropdown labels for the custom formats (Quill only ships labels for its default class-based sizes). */
+.mfm-editor .ql-snow .ql-picker.ql-size { width: 74px; }
+.mfm-editor .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.mfm-editor .ql-snow .ql-picker.ql-size .ql-picker-item::before { content: 'Size'; }
+.mfm-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before,
+.mfm-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before { content: attr(data-value); }
+
+.mfm-editor .ql-snow .ql-picker.ql-lineheight { width: 96px; }
+.mfm-editor .ql-snow .ql-picker.ql-lineheight .ql-picker-label::before,
+.mfm-editor .ql-snow .ql-picker.ql-lineheight .ql-picker-item::before { content: 'Line spacing'; }
+.mfm-editor .ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value]::before,
+.mfm-editor .ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value]::before { content: 'Line ' attr(data-value); }
+
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing { width: 112px; }
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing .ql-picker-label::before,
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing .ql-picker-item::before { content: 'Para spacing'; }
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing .ql-picker-label[data-value]::before,
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing .ql-picker-item[data-value]::before { content: 'Para ' attr(data-value); }
+
+/* How a saved message body is displayed (composer preview, Sent tab, SSI inboxes). Matches the editor so what you
+   format is what the recipient sees. Inline styles from the sanitised HTML (size, alignment, spacing) win over these. */
+.mfm-body { font-size: 0.92rem; line-height: 1.42; overflow-wrap: anywhere; word-break: break-word; }
+.mfm-body p { margin: 0; }
+.mfm-body ol, .mfm-body ul { margin: 0.25rem 0 0.25rem 1.4rem; padding: 0; }
+.mfm-body blockquote { margin: 0.5rem 0; padding-left: 0.75rem; border-left: 3px solid var(--gray-200, #e5e7eb); }
+
+@media (max-width: 480px) {
+  .mfm-editor .ql-container, .mfm-editor .ql-editor { min-height: 180px; }
+}
+
+/* ── Management's extended toolbar ─────────────────────────────────────────── */
+.mfm-editor .ql-snow .ql-picker.ql-font { width: 92px; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item::before { content: 'Font'; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value]::before,
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value]::before { content: attr(data-value); }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Arial"]::before   { font-family: Arial, sans-serif; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Georgia"]::before { font-family: Georgia, serif; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Verdana"]::before { font-family: Verdana, sans-serif; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Tahoma"]::before  { font-family: Tahoma, sans-serif; }
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Courier"]::before { font-family: 'Courier New', monospace; }
+
+.mfm-editor .ql-snow .ql-toolbar button.ql-undo, .mfm-editor .ql-snow .ql-toolbar button.ql-redo,
+.mfm-editor .ql-toolbar button.ql-undo, .mfm-editor .ql-toolbar button.ql-redo { width: 28px; }
+.mfm-glyph { font-size: 17px; line-height: 1; }
+
+.mfm-editor__foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 0.75rem; color: var(--gray-500, #6b7280); margin-top: 6px; }
+.mfm-editor--expanded .ql-container, .mfm-editor--expanded .ql-editor { min-height: 60vh; }
+.mfm-editor .ql-editor a { color: var(--primary, #2563eb); text-decoration: underline; }
+
+/* Indentation is the editor's own class (kept by the server allow-list) — show it wherever a body is displayed. */
+.mfm-body .ql-indent-1, .mfm-editor .ql-editor .ql-indent-1 { padding-left: 3em; }
+.mfm-body .ql-indent-2, .mfm-editor .ql-editor .ql-indent-2 { padding-left: 6em; }
+.mfm-body .ql-indent-3, .mfm-editor .ql-editor .ql-indent-3 { padding-left: 9em; }
+.mfm-body .ql-indent-4 { padding-left: 12em; } .mfm-body .ql-indent-5 { padding-left: 15em; }
+.mfm-body .ql-indent-6 { padding-left: 18em; } .mfm-body .ql-indent-7 { padding-left: 21em; } .mfm-body .ql-indent-8 { padding-left: 24em; }
+.mfm-body a { color: var(--primary, #2563eb); text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .mfm-body .ql-indent-1 { padding-left: 1.5em; } .mfm-body .ql-indent-2 { padding-left: 3em; } .mfm-body .ql-indent-3 { padding-left: 4.5em; }
+  .mfm-body .ql-indent-4 { padding-left: 6em; } .mfm-body .ql-indent-5, .mfm-body .ql-indent-6, .mfm-body .ql-indent-7, .mfm-body .ql-indent-8 { padding-left: 7em; }
+}
+
+/* The "Default" entry of each custom picker (no data-value) is listed as "Default"; the closed picker shows its name. */
+.mfm-editor .ql-snow .ql-picker.ql-font .ql-picker-item:not([data-value])::before,
+.mfm-editor .ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before,
+.mfm-editor .ql-snow .ql-picker.ql-lineheight .ql-picker-item:not([data-value])::before,
+.mfm-editor .ql-snow .ql-picker.ql-paraspacing .ql-picker-item:not([data-value])::before { content: 'Default'; }

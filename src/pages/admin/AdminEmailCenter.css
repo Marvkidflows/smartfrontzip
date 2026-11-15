@@ -1,0 +1,84 @@
+/* EMAIL CENTER */
+
+.ec-tabs {
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+  border-bottom: 1px solid var(--gray-200); margin-bottom: 1.5rem;
+}
+.ec-tab {
+  background: none; border: none; padding: 0.75rem 1.1rem;
+  font-size: 0.85rem; font-weight: 600; color: var(--gray-400);
+  border-bottom: 2px solid transparent; cursor: pointer; transition: var(--transition);
+}
+.ec-tab:hover { color: var(--gray-700); }
+.ec-tab.active { color: var(--royal); border-bottom-color: var(--royal); }
+
+.ec-compose-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start;
+}
+@media (max-width: 1000px) { .ec-compose-grid { grid-template-columns: 1fr; } }
+
+.ec-search-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
+  background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg); max-height: 260px; overflow-y: auto;
+}
+.ec-search-item {
+  display: flex; align-items: center; gap: 0.65rem; padding: 0.65rem 0.9rem;
+  cursor: pointer; transition: var(--transition);
+}
+.ec-search-item:hover { background: var(--gray-50); }
+.ec-search-item__avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--royal), var(--gold));
+  color: white; font-weight: 700; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.ec-search-item__name { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+.ec-search-item__email { font-size: 0.75rem; color: var(--gray-400); }
+
+.ec-selected-recipient {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--success-bg); color: var(--success);
+  padding: 0.6rem 0.9rem; border-radius: var(--radius-md);
+  font-size: 0.82rem; font-weight: 600; margin-bottom: 1.25rem;
+}
+
+.ec-quill-wrap .ql-container {
+  min-height: 180px; border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-size: 0.9rem; font-family: var(--font-sans);
+}
+.ec-quill-wrap .ql-toolbar {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: var(--gray-50);
+}
+
+.ec-preview-frame {
+  border: 1px solid var(--gray-200); border-radius: var(--radius-md); overflow: hidden;
+}
+.ec-preview-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 1.1rem; background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.88rem; font-weight: 700; color: var(--navy);
+}
+.ec-preview-body {
+  padding: 1.25rem; font-size: 0.88rem; line-height: 1.7; color: var(--gray-700);
+  min-height: 200px;
+}
+.ec-preview-body img { max-width: 100%; }
+
+.ec-recipient-count {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--info-bg); color: var(--info);
+  padding: 0.75rem 1rem; border-radius: var(--radius-md);
+  font-size: 0.85rem; margin-bottom: 1.25rem;
+}
+
+.ec-template-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;
+}
+.ec-template-card {
+  border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  padding: 1.1rem; transition: var(--transition);
+}
+.ec-template-card:hover { box-shadow: var(--shadow-sm); border-color: var(--gray-300); }
