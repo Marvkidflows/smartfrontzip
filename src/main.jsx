@@ -4,6 +4,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import App from './App';
 import './index.css';
+import { reloadOnce } from './utils/lazyWithRetry';
+
+// Vite fires this when a lazily-loaded chunk's preload fails (typically a stale index.html after a new deployment). Reload once to pick
+// up the fresh index.html; lazyWithRetry's sessionStorage flag guarantees this can never loop.
+window.addEventListener('vite:preloadError', (event) => {
+  if (reloadOnce()) event.preventDefault();
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

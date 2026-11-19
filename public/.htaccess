@@ -27,3 +27,9 @@
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
 </IfModule>
+
+# Compress text assets. Without this the ~700 KB of JavaScript is sent uncompressed on slow networks (gzip typically cuts JS/CSS by ~70%).
+# Wrapped in IfModule so a host without mod_deflate cannot return a 500. (If your host already compresses, this is harmless.)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json image/svg+xml
+</IfModule>

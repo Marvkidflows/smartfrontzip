@@ -1,117 +1,127 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import useAuthStore from './store/authStore';
+import lazyWithRetry from './utils/lazyWithRetry';
+import { RouteFallback, ScreenFallback } from './components/RouteFallback';
+import ChunkErrorBoundary from './components/ChunkErrorBoundary';
+
+// ─── CODE SPLITTING (performance remediation) ────────────────────────────────
+// Only the landing experience is bundled eagerly: the public layout (header/footer) and the home page. Every other page and every
+// role layout (Investor / Admin / Financial / MarvFlow / Registration Team) is its own lazily-downloaded chunk, so a visitor on the
+// landing, login or registration page no longer downloads the dashboards, charts, rich-text editor, etc.
+// The role guards below (InvestorRoute, AdminRoute, ...) are UNCHANGED and still wrap the lazy layouts, so an unauthenticated or
+// unauthorised user is redirected before the protected chunk is ever requested.
+import PublicLayout from './layouts/PublicLayout';
+import HomePage     from './pages/public/HomePage';
+
+const lazyPage = (loader) => lazyWithRetry(loader);
 
 // Layouts
-import PublicLayout   from './layouts/PublicLayout';
-import InvestorLayout from './layouts/InvestorLayout';
-import AdminLayout    from './layouts/AdminLayout';
-import FinancialLayout from './layouts/FinancialLayout';
-import MarvflowLayout from './layouts/MarvflowLayout';
-import RegistrationLayout from './layouts/RegistrationLayout';
+const InvestorLayout     = lazyPage(() => import('./layouts/InvestorLayout'));
+const AdminLayout        = lazyPage(() => import('./layouts/AdminLayout'));
+const FinancialLayout    = lazyPage(() => import('./layouts/FinancialLayout'));
+const MarvflowLayout     = lazyPage(() => import('./layouts/MarvflowLayout'));
+const RegistrationLayout = lazyPage(() => import('./layouts/RegistrationLayout'));
 
-// Public Pages
-import HomePage       from './pages/public/HomePage';
-import AboutPage      from './pages/public/AboutPage';
-import PlansPage      from './pages/public/PlansPage';
-import HowItWorksPage from './pages/public/HowItWorksPage';
-import FaqPage        from './pages/public/FaqPage';
-import ContactPage    from './pages/public/ContactPage';
-import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage';
-import LoginPage      from './pages/public/LoginPage';
-import RegisterPage   from './pages/public/RegisterPage';
-import ForgotPasswordPage from './pages/public/ForgotPassword';
-import ResetPasswordPage from './pages/public/ResetPassword';
+// Public pages
+const AboutPage          = lazyPage(() => import('./pages/public/AboutPage'));
+const PlansPage          = lazyPage(() => import('./pages/public/PlansPage'));
+const HowItWorksPage     = lazyPage(() => import('./pages/public/HowItWorksPage'));
+const FaqPage            = lazyPage(() => import('./pages/public/FaqPage'));
+const ContactPage        = lazyPage(() => import('./pages/public/ContactPage'));
+const PrivacyPolicyPage  = lazyPage(() => import('./pages/public/PrivacyPolicyPage'));
+const LoginPage          = lazyPage(() => import('./pages/public/LoginPage'));
+const RegisterPage       = lazyPage(() => import('./pages/public/RegisterPage'));
+const ForgotPasswordPage = lazyPage(() => import('./pages/public/ForgotPassword'));
+const ResetPasswordPage  = lazyPage(() => import('./pages/public/ResetPassword'));
+const NewsPage           = lazyPage(() => import('./pages/public/NewsPage'));
+const MarketPage         = lazyPage(() => import('./pages/public/MarketPage'));
 
-// Investor Pages
-import InvestorDashboard    from './pages/investor/InvestorDashboard';
-import InvestorInvestments  from './pages/investor/InvestorInvestments';
-import InvestorPlans        from './pages/investor/InvestorPlans';
-import InvestorSectors      from './pages/investor/InvestorSectors';
-import InvestorDeposits     from './pages/investor/InvestorDeposits';
-import InvestorWithdrawals  from './pages/investor/InvestorWithdrawals';
-import InvestorMessages     from './pages/investor/InvestorMessages';
-import InvestorProfile      from './pages/investor/InvestorProfile';
-import InvestorRank         from './pages/investor/InvestorRank';
-import InvestorNotifications from './pages/investor/InvestorNotifications';
-import InvestorReferrals    from './pages/investor/InvestorReferrals';
-import FinancialReferrals from './pages/financial/FinancialReferrals';
-import FinancialWithdrawalFees from './pages/financial/FinancialWithdrawalFees';
-import InvestorAnnouncements from './pages/investor/InvestorAnnouncements';
-import InvestorTasks        from './pages/investor/InvestorTasks';
-import InvestorEmails       from './pages/investor/InvestorEmails';
-import InvestorMarket       from './pages/investor/InvestorMarket';
-import InvestorFixtures     from './pages/investor/InvestorFixtures';
+// Investor pages
+const InvestorDashboard     = lazyPage(() => import('./pages/investor/InvestorDashboard'));
+const InvestorInvestments   = lazyPage(() => import('./pages/investor/InvestorInvestments'));
+const InvestorPlans         = lazyPage(() => import('./pages/investor/InvestorPlans'));
+const InvestorSectors       = lazyPage(() => import('./pages/investor/InvestorSectors'));
+const InvestorDeposits      = lazyPage(() => import('./pages/investor/InvestorDeposits'));
+const InvestorWithdrawals   = lazyPage(() => import('./pages/investor/InvestorWithdrawals'));
+const InvestorMessages      = lazyPage(() => import('./pages/investor/InvestorMessages'));
+const InvestorProfile       = lazyPage(() => import('./pages/investor/InvestorProfile'));
+const InvestorRank          = lazyPage(() => import('./pages/investor/InvestorRank'));
+const InvestorNotifications = lazyPage(() => import('./pages/investor/InvestorNotifications'));
+const InvestorReferrals     = lazyPage(() => import('./pages/investor/InvestorReferrals'));
+const InvestorAnnouncements = lazyPage(() => import('./pages/investor/InvestorAnnouncements'));
+const InvestorTasks         = lazyPage(() => import('./pages/investor/InvestorTasks'));
+const InvestorEmails        = lazyPage(() => import('./pages/investor/InvestorEmails'));
+const InvestorMarket        = lazyPage(() => import('./pages/investor/InvestorMarket'));
+const InvestorFixtures      = lazyPage(() => import('./pages/investor/InvestorFixtures'));
+const InvestorNewsHub       = lazyPage(() => import('./pages/investor/InvestorNewsHub'));
+const UpdatesRedirect       = lazyPage(() => import('./pages/investor/InvestorNewsHub').then((m) => ({ default: m.UpdatesRedirect })));
 
-// Admin Pages
-import AdminDashboard        from './pages/admin/AdminDashboard';
-import AdminUsers            from './pages/admin/AdminUsers';
-import AdminUserDetail       from './pages/admin/AdminUserDetail';
-import AdminInvestments      from './pages/admin/AdminInvestments';
-import AdminDeposits         from './pages/admin/AdminDeposits';
-import AdminWithdrawals      from './pages/admin/AdminWithdrawals';
-import AdminMessages         from './pages/admin/AdminMessages';
-import AdminAnnouncements    from './pages/admin/AdminAnnouncements';
-import AdminTasks            from './pages/admin/AdminTasks';
-import AdminAnalytics        from './pages/admin/AdminAnalytics';
-import AdminPlans            from './pages/admin/AdminPlans';
-import AdminSectors          from './pages/admin/AdminSectors';
-import AdminGlobalManagement from './pages/admin/AdminGlobalManagement';
-import AdminKyc              from './pages/admin/AdminKyc';
-import AdminRanks            from './pages/admin/AdminRanks';
-import AdminRankInvestor     from './pages/admin/ranks/AdminRankInvestor';
-import AdminNotifications    from './pages/admin/AdminNotifications';
-import FinancialDashboard    from './pages/financial/FinancialDashboard';
-import FinancialInvestors       from './pages/financial/FinancialInvestors';
-import FinancialInvestorDetail  from './pages/financial/FinancialInvestorDetail';
-import FinancialDeposits     from './pages/financial/FinancialDeposits';
-import FinancialWithdrawals  from './pages/financial/FinancialWithdrawals';
-import FinancialTransactions from './pages/financial/FinancialTransactions';
-import FinancialInvestments  from './pages/financial/FinancialInvestments';
-import FinancialNotifications from './pages/financial/FinancialNotifications';
-import FinancialProfile      from './pages/financial/FinancialProfile';
-import FinancialMessages     from './pages/financial/FinancialMessages';
-import FinancialAuditLog     from './pages/financial/FinancialAuditLog';
-import FinancialCurrency     from './pages/financial/FinancialCurrency';
-import FinancialRankApprovals from './pages/financial/FinancialRankApprovals';
-import ApprovalsInbox from './pages/shared/ApprovalsInbox';
-import AdminEmailCenter      from './pages/admin/AdminEmailCenter';
-import AdminMailing          from './pages/admin/AdminMailing';        // Task 3
-import AdminNewsMedia        from './pages/admin/AdminNewsMedia';      // Task 4
-import NewsPage              from './pages/public/NewsPage';           // Task 4
-import InvestorNewsHub, { UpdatesRedirect } from './pages/investor/InvestorNewsHub';
-import RegistrationProfile   from './pages/registration/RegistrationProfile';
-import StaffMailing          from './pages/staff/StaffMailing';        // delegated staff (permission-driven)
-import StaffNews             from './pages/staff/StaffNews';           // delegated staff (permission-driven)  // Task 4 (integration wrapper: one investor news experience)
-import AdminFixtures         from './pages/admin/AdminFixtures';
+// Admin pages
+const AdminDashboard        = lazyPage(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers            = lazyPage(() => import('./pages/admin/AdminUsers'));
+const AdminUserDetail       = lazyPage(() => import('./pages/admin/AdminUserDetail'));
+const AdminInvestments      = lazyPage(() => import('./pages/admin/AdminInvestments'));
+const AdminDeposits         = lazyPage(() => import('./pages/admin/AdminDeposits'));
+const AdminWithdrawals      = lazyPage(() => import('./pages/admin/AdminWithdrawals'));
+const AdminMessages         = lazyPage(() => import('./pages/admin/AdminMessages'));
+const AdminAnnouncements    = lazyPage(() => import('./pages/admin/AdminAnnouncements'));
+const AdminTasks            = lazyPage(() => import('./pages/admin/AdminTasks'));
+const AdminAnalytics        = lazyPage(() => import('./pages/admin/AdminAnalytics'));
+const AdminPlans            = lazyPage(() => import('./pages/admin/AdminPlans'));
+const AdminSectors          = lazyPage(() => import('./pages/admin/AdminSectors'));
+const AdminGlobalManagement = lazyPage(() => import('./pages/admin/AdminGlobalManagement'));
+const AdminKyc              = lazyPage(() => import('./pages/admin/AdminKyc'));
+const AdminRanks            = lazyPage(() => import('./pages/admin/AdminRanks'));
+const AdminRankInvestor     = lazyPage(() => import('./pages/admin/ranks/AdminRankInvestor'));
+const AdminNotifications    = lazyPage(() => import('./pages/admin/AdminNotifications'));
+const AdminEmailCenter      = lazyPage(() => import('./pages/admin/AdminEmailCenter'));
+const AdminMailing          = lazyPage(() => import('./pages/admin/AdminMailing'));
+const AdminNewsMedia        = lazyPage(() => import('./pages/admin/AdminNewsMedia'));
+const AdminFixtures         = lazyPage(() => import('./pages/admin/AdminFixtures'));
 
-// Market (public)
-import MarketPage            from './pages/public/MarketPage';
+// Financial pages
+const FinancialReferrals      = lazyPage(() => import('./pages/financial/FinancialReferrals'));
+const FinancialWithdrawalFees = lazyPage(() => import('./pages/financial/FinancialWithdrawalFees'));
+const FinancialDashboard      = lazyPage(() => import('./pages/financial/FinancialDashboard'));
+const FinancialInvestors      = lazyPage(() => import('./pages/financial/FinancialInvestors'));
+const FinancialInvestorDetail = lazyPage(() => import('./pages/financial/FinancialInvestorDetail'));
+const FinancialDeposits       = lazyPage(() => import('./pages/financial/FinancialDeposits'));
+const FinancialWithdrawals    = lazyPage(() => import('./pages/financial/FinancialWithdrawals'));
+const FinancialTransactions   = lazyPage(() => import('./pages/financial/FinancialTransactions'));
+const FinancialInvestments    = lazyPage(() => import('./pages/financial/FinancialInvestments'));
+const FinancialNotifications  = lazyPage(() => import('./pages/financial/FinancialNotifications'));
+const FinancialProfile        = lazyPage(() => import('./pages/financial/FinancialProfile'));
+const FinancialMessages       = lazyPage(() => import('./pages/financial/FinancialMessages'));
+const FinancialAuditLog       = lazyPage(() => import('./pages/financial/FinancialAuditLog'));
+const FinancialCurrency       = lazyPage(() => import('./pages/financial/FinancialCurrency'));
+const FinancialRankApprovals  = lazyPage(() => import('./pages/financial/FinancialRankApprovals'));
 
-// Shared — MarvFlow Team Dashboard, Smart System Investment side
-// ("Contact Development Team"), mounted under both /admin and
-// /financial (see route groups below).
-import DevRequests       from './pages/shared/DevRequests';
-import DevRequestDetail  from './pages/shared/DevRequestDetail';
-import StaffChannel      from './pages/shared/StaffChannel';
-import MarvflowInbox     from './pages/shared/MarvflowInbox';
+// Shared / delegated-staff pages
+const ApprovalsInbox   = lazyPage(() => import('./pages/shared/ApprovalsInbox'));
+const StaffMailing     = lazyPage(() => import('./pages/staff/StaffMailing'));
+const StaffNews        = lazyPage(() => import('./pages/staff/StaffNews'));
+const DevRequests      = lazyPage(() => import('./pages/shared/DevRequests'));
+const DevRequestDetail = lazyPage(() => import('./pages/shared/DevRequestDetail'));
+const StaffChannel     = lazyPage(() => import('./pages/shared/StaffChannel'));
+const MarvflowInbox    = lazyPage(() => import('./pages/shared/MarvflowInbox'));
 
-// MarvFlow Team Dashboard — MarvFlow Technologies' own side. Entirely
-// separate from Smart System Investment's admin/financial dashboards.
-import MarvflowDashboard     from './pages/marvflow/MarvflowDashboard';
-import MarvflowRequests      from './pages/marvflow/MarvflowRequests';
-import MarvflowRequestDetail from './pages/marvflow/MarvflowRequestDetail';
-import MarvflowTeamMembers   from './pages/marvflow/MarvflowTeamMembers';
-import MarvflowNotifications from './pages/marvflow/MarvflowNotifications';
-import MarvflowProfile       from './pages/marvflow/MarvflowProfile';
-import MarvflowMessages      from './pages/marvflow/MarvflowMessages';
+// MarvFlow pages
+const MarvflowDashboard     = lazyPage(() => import('./pages/marvflow/MarvflowDashboard'));
+const MarvflowRequests      = lazyPage(() => import('./pages/marvflow/MarvflowRequests'));
+const MarvflowRequestDetail = lazyPage(() => import('./pages/marvflow/MarvflowRequestDetail'));
+const MarvflowTeamMembers   = lazyPage(() => import('./pages/marvflow/MarvflowTeamMembers'));
+const MarvflowNotifications = lazyPage(() => import('./pages/marvflow/MarvflowNotifications'));
+const MarvflowProfile       = lazyPage(() => import('./pages/marvflow/MarvflowProfile'));
+const MarvflowMessages      = lazyPage(() => import('./pages/marvflow/MarvflowMessages'));
 
-// Registration Team (Task 2) — onboarding and KYC review only; no financial pages.
-import RegistrationDashboard         from './pages/registration/RegistrationDashboard';
-import RegistrationApplications      from './pages/registration/RegistrationApplications';
-import RegistrationApplicationDetail from './pages/registration/RegistrationApplicationDetail';
-import RegistrationActivity          from './pages/registration/RegistrationActivity';
-import RegistrationNotifications     from './pages/registration/RegistrationNotifications';
+// Registration Team pages
+const RegistrationProfile           = lazyPage(() => import('./pages/registration/RegistrationProfile'));
+const RegistrationDashboard         = lazyPage(() => import('./pages/registration/RegistrationDashboard'));
+const RegistrationApplications      = lazyPage(() => import('./pages/registration/RegistrationApplications'));
+const RegistrationApplicationDetail = lazyPage(() => import('./pages/registration/RegistrationApplicationDetail'));
+const RegistrationActivity          = lazyPage(() => import('./pages/registration/RegistrationActivity'));
+const RegistrationNotifications     = lazyPage(() => import('./pages/registration/RegistrationNotifications'));
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function isAdminUser(user)     { return user?.role === 'admin' || user?.is_admin === true; }
@@ -210,6 +220,12 @@ function RegistrationRoute({ children }) {
   return children;
 }
 
+// Suspense wrapper for a lazily-loaded element. `screen` = full-screen fallback (layouts / auth pages); default = inline fallback that
+// keeps the surrounding layout (sidebar, header) on screen while the page body downloads.
+function Lazy({ children, screen = false }) {
+  return <Suspense fallback={screen ? <ScreenFallback /> : <RouteFallback />}>{children}</Suspense>;
+}
+
 // ─── FULL-SCREEN LOADING SPLASH ───────────────────────────────────────────────
 function AuthLoadingScreen() {
   return (
@@ -248,116 +264,117 @@ export default function App() {
   }
 
   return (
+    <ChunkErrorBoundary>
     <Routes>
       {/* ── PUBLIC ── */}
       <Route element={<PublicLayout />}>
         <Route path="/"             element={<HomePage />} />
-        <Route path="/about"        element={<AboutPage />} />
-        <Route path="/plans"        element={<PlansPage />} />
-        <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/faq"          element={<FaqPage />} />
-        <Route path="/contact"      element={<ContactPage />} />
-        <Route path="/news"         element={<NewsPage />} />
-        <Route path="/news/:slug"   element={<NewsPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/market"       element={<MarketPage />} />
+        <Route path="/about"        element={<Lazy><AboutPage /></Lazy>} />
+        <Route path="/plans"        element={<Lazy><PlansPage /></Lazy>} />
+        <Route path="/how-it-works" element={<Lazy><HowItWorksPage /></Lazy>} />
+        <Route path="/faq"          element={<Lazy><FaqPage /></Lazy>} />
+        <Route path="/contact"      element={<Lazy><ContactPage /></Lazy>} />
+        <Route path="/news"         element={<Lazy><NewsPage /></Lazy>} />
+        <Route path="/news/:slug"   element={<Lazy><NewsPage /></Lazy>} />
+        <Route path="/privacy-policy" element={<Lazy><PrivacyPolicyPage /></Lazy>} />
+        <Route path="/market"       element={<Lazy><MarketPage /></Lazy>} />
       </Route>
 
       {/* ── AUTH ── */}
-      <Route path="/login"    element={<GuestRoute><LoginPage /></GuestRoute>} />
-      <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
-      <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
-     <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/login"    element={<GuestRoute><Lazy screen><LoginPage /></Lazy></GuestRoute>} />
+      <Route path="/register" element={<GuestRoute><Lazy screen><RegisterPage /></Lazy></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><Lazy screen><ForgotPasswordPage /></Lazy></GuestRoute>} />
+     <Route path="/reset-password" element={<Lazy screen><ResetPasswordPage /></Lazy>} />
 
       {/* ── INVESTOR ── */}
-      <Route path="/investor" element={<InvestorRoute><InvestorLayout /></InvestorRoute>}>
+      <Route path="/investor" element={<InvestorRoute><Lazy screen><InvestorLayout /></Lazy></InvestorRoute>}>
         <Route index                    element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard"         element={<InvestorDashboard />} />
-        <Route path="investments"       element={<InvestorInvestments />} />
-        <Route path="investments/plans" element={<InvestorPlans />} />
-        <Route path="sectors"           element={<InvestorSectors />} />
-        <Route path="tasks"             element={<InvestorTasks />} />
-        <Route path="market"            element={<InvestorMarket />} />
-        <Route path="predictions"       element={<InvestorFixtures />} />
-        <Route path="deposits"          element={<InvestorDeposits />} />
-        <Route path="withdrawals"       element={<InvestorWithdrawals />} />
-        <Route path="messages"          element={<InvestorMessages />} />
-        <Route path="emails"            element={<InvestorEmails />} />
-        <Route path="profile"           element={<InvestorProfile />} />
-        <Route path="rank"              element={<InvestorRank />} />
-        <Route path="notifications"     element={<InvestorNotifications />} />
-        <Route path="referrals"         element={<InvestorReferrals />} />
+        <Route path="dashboard"         element={<Lazy><InvestorDashboard /></Lazy>} />
+        <Route path="investments"       element={<Lazy><InvestorInvestments /></Lazy>} />
+        <Route path="investments/plans" element={<Lazy><InvestorPlans /></Lazy>} />
+        <Route path="sectors"           element={<Lazy><InvestorSectors /></Lazy>} />
+        <Route path="tasks"             element={<Lazy><InvestorTasks /></Lazy>} />
+        <Route path="market"            element={<Lazy><InvestorMarket /></Lazy>} />
+        <Route path="predictions"       element={<Lazy><InvestorFixtures /></Lazy>} />
+        <Route path="deposits"          element={<Lazy><InvestorDeposits /></Lazy>} />
+        <Route path="withdrawals"       element={<Lazy><InvestorWithdrawals /></Lazy>} />
+        <Route path="messages"          element={<Lazy><InvestorMessages /></Lazy>} />
+        <Route path="emails"            element={<Lazy><InvestorEmails /></Lazy>} />
+        <Route path="profile"           element={<Lazy><InvestorProfile /></Lazy>} />
+        <Route path="rank"              element={<Lazy><InvestorRank /></Lazy>} />
+        <Route path="notifications"     element={<Lazy><InvestorNotifications /></Lazy>} />
+        <Route path="referrals"         element={<Lazy><InvestorReferrals /></Lazy>} />
         {/* Integration: ONE investor news experience.
             /investor/news[/:slug]  = the Task 4 News & Updates module (InvestorNewsHub; an old announcement slug falls through to the legacy page).
             /investor/announcements[/:slug] = the original announcements-based page, kept so existing links, the dashboard link and legacy items still work.
             /investor/updates[/:slug] = redirected to /investor/news so there is no second feed. */}
-        <Route path="announcements"     element={<InvestorAnnouncements />} />
-        <Route path="announcements/:slug" element={<InvestorAnnouncements />} />
-        <Route path="news"              element={<InvestorNewsHub />} />
-        <Route path="news/:slug"        element={<InvestorNewsHub />} />
+        <Route path="announcements"     element={<Lazy><InvestorAnnouncements /></Lazy>} />
+        <Route path="announcements/:slug" element={<Lazy><InvestorAnnouncements /></Lazy>} />
+        <Route path="news"              element={<Lazy><InvestorNewsHub /></Lazy>} />
+        <Route path="news/:slug"        element={<Lazy><InvestorNewsHub /></Lazy>} />
         <Route path="updates"           element={<Navigate to="/investor/news" replace />} />
-        <Route path="updates/:slug"     element={<UpdatesRedirect />} />
+        <Route path="updates/:slug"     element={<Lazy><UpdatesRedirect /></Lazy>} />
       </Route>
 
       {/* ── ADMIN ── */}
-      <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+      <Route path="/admin" element={<AdminRoute><Lazy screen><AdminLayout /></Lazy></AdminRoute>}>
         <Route index                element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard"     element={<AdminDashboard />} />
-        <Route path="users"         element={<AdminUsers />} />
-        <Route path="users/:id"     element={<AdminUserDetail />} />
-        <Route path="investments"   element={<AdminInvestments />} />
-        <Route path="tasks"         element={<AdminTasks />} />
-        <Route path="predictions"   element={<AdminFixtures />} />
-        <Route path="deposits"      element={<AdminDeposits />} />
-        <Route path="withdrawals"   element={<AdminWithdrawals />} />
-        <Route path="messages"      element={<AdminMessages />} />
-        <Route path="email-center"  element={<AdminEmailCenter />} />
-        <Route path="mailing/public"   element={<AdminMailing environment="public" />} />
-        <Route path="mailing/investor" element={<AdminMailing environment="investor" />} />
-        <Route path="announcements" element={<AdminAnnouncements />} />
-        <Route path="news-media"    element={<AdminNewsMedia />} />
-        <Route path="plans"         element={<AdminPlans />} />
-        <Route path="sectors"       element={<AdminSectors />} />
-        <Route path="global"        element={<AdminGlobalManagement />} />
-        <Route path="approvals"     element={<ApprovalsInbox />} />
-        <Route path="kyc"           element={<AdminKyc />} />
+        <Route path="dashboard"     element={<Lazy><AdminDashboard /></Lazy>} />
+        <Route path="users"         element={<Lazy><AdminUsers /></Lazy>} />
+        <Route path="users/:id"     element={<Lazy><AdminUserDetail /></Lazy>} />
+        <Route path="investments"   element={<Lazy><AdminInvestments /></Lazy>} />
+        <Route path="tasks"         element={<Lazy><AdminTasks /></Lazy>} />
+        <Route path="predictions"   element={<Lazy><AdminFixtures /></Lazy>} />
+        <Route path="deposits"      element={<Lazy><AdminDeposits /></Lazy>} />
+        <Route path="withdrawals"   element={<Lazy><AdminWithdrawals /></Lazy>} />
+        <Route path="messages"      element={<Lazy><AdminMessages /></Lazy>} />
+        <Route path="email-center"  element={<Lazy><AdminEmailCenter /></Lazy>} />
+        <Route path="mailing/public"   element={<Lazy><AdminMailing environment="public"/></Lazy>} />
+        <Route path="mailing/investor" element={<Lazy><AdminMailing environment="investor"/></Lazy>} />
+        <Route path="announcements" element={<Lazy><AdminAnnouncements /></Lazy>} />
+        <Route path="news-media"    element={<Lazy><AdminNewsMedia /></Lazy>} />
+        <Route path="plans"         element={<Lazy><AdminPlans /></Lazy>} />
+        <Route path="sectors"       element={<Lazy><AdminSectors /></Lazy>} />
+        <Route path="global"        element={<Lazy><AdminGlobalManagement /></Lazy>} />
+        <Route path="approvals"     element={<Lazy><ApprovalsInbox /></Lazy>} />
+        <Route path="kyc"           element={<Lazy><AdminKyc /></Lazy>} />
         {/* Investor Rank & Badge module — the specific investor route must precede :tab */}
         <Route path="ranks"                 element={<Navigate to="/admin/ranks/investors" replace />} />
-        <Route path="ranks/investors/:id"   element={<AdminRankInvestor />} />
-        <Route path="ranks/:tab"            element={<AdminRanks />} />
-        <Route path="notifications"         element={<AdminNotifications />} />
-        <Route path="dev-requests"      element={<DevRequests />} />
-        <Route path="dev-requests/:id"  element={<DevRequestDetail />} />
-        <Route path="staff-messages"    element={<StaffChannel />} />
-        <Route path="marvflow-messages" element={<MarvflowInbox />} />
-         <Route path="analytics"     element={<AdminAnalytics />} />
+        <Route path="ranks/investors/:id"   element={<Lazy><AdminRankInvestor /></Lazy>} />
+        <Route path="ranks/:tab"            element={<Lazy><AdminRanks /></Lazy>} />
+        <Route path="notifications"         element={<Lazy><AdminNotifications /></Lazy>} />
+        <Route path="dev-requests"      element={<Lazy><DevRequests /></Lazy>} />
+        <Route path="dev-requests/:id"  element={<Lazy><DevRequestDetail /></Lazy>} />
+        <Route path="staff-messages"    element={<Lazy><StaffChannel /></Lazy>} />
+        <Route path="marvflow-messages" element={<Lazy><MarvflowInbox /></Lazy>} />
+         <Route path="analytics"     element={<Lazy><AdminAnalytics /></Lazy>} />
       </Route>
 
       {/* ── FINANCIAL TEAM ── */}
-      <Route path="/financial" element={<FinancialRoute><FinancialLayout /></FinancialRoute>}>
+      <Route path="/financial" element={<FinancialRoute><Lazy screen><FinancialLayout /></Lazy></FinancialRoute>}>
         <Route index               element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard"    element={<FinancialDashboard />} />
-        <Route path="mailing"       element={<StaffMailing />} />
-        <Route path="news"          element={<StaffNews />} />
-        <Route path="investors"    element={<FinancialInvestors />} />
-        <Route path="investors/:id" element={<FinancialInvestorDetail />} />
-        <Route path="deposits"     element={<FinancialDeposits />} />
-        <Route path="withdrawals"  element={<FinancialWithdrawals />} />
-        <Route path="transactions" element={<FinancialTransactions />} />
-        <Route path="investments"  element={<FinancialInvestments />} />
-        <Route path="messages"      element={<FinancialMessages />} />
-        <Route path="audit-log"     element={<FinancialAuditLog />} />
-        <Route path="currency"      element={<FinancialCurrency />} />
-        <Route path="rank-approvals" element={<FinancialRankApprovals />} />
-        <Route path="referrals" element={<FinancialReferrals />} />
-        <Route path="withdrawal-fees" element={<FinancialWithdrawalFees />} />
-        <Route path="approvals"      element={<ApprovalsInbox />} />
-        <Route path="notifications" element={<FinancialNotifications />} />
-        <Route path="profile"      element={<FinancialProfile />} />
-        <Route path="dev-requests"      element={<DevRequests />} />
-        <Route path="dev-requests/:id"  element={<DevRequestDetail />} />
-        <Route path="staff-messages"    element={<StaffChannel />} />
-        <Route path="marvflow-messages" element={<MarvflowInbox />} />
+        <Route path="dashboard"    element={<Lazy><FinancialDashboard /></Lazy>} />
+        <Route path="mailing"       element={<Lazy><StaffMailing /></Lazy>} />
+        <Route path="news"          element={<Lazy><StaffNews /></Lazy>} />
+        <Route path="investors"    element={<Lazy><FinancialInvestors /></Lazy>} />
+        <Route path="investors/:id" element={<Lazy><FinancialInvestorDetail /></Lazy>} />
+        <Route path="deposits"     element={<Lazy><FinancialDeposits /></Lazy>} />
+        <Route path="withdrawals"  element={<Lazy><FinancialWithdrawals /></Lazy>} />
+        <Route path="transactions" element={<Lazy><FinancialTransactions /></Lazy>} />
+        <Route path="investments"  element={<Lazy><FinancialInvestments /></Lazy>} />
+        <Route path="messages"      element={<Lazy><FinancialMessages /></Lazy>} />
+        <Route path="audit-log"     element={<Lazy><FinancialAuditLog /></Lazy>} />
+        <Route path="currency"      element={<Lazy><FinancialCurrency /></Lazy>} />
+        <Route path="rank-approvals" element={<Lazy><FinancialRankApprovals /></Lazy>} />
+        <Route path="referrals" element={<Lazy><FinancialReferrals /></Lazy>} />
+        <Route path="withdrawal-fees" element={<Lazy><FinancialWithdrawalFees /></Lazy>} />
+        <Route path="approvals"      element={<Lazy><ApprovalsInbox /></Lazy>} />
+        <Route path="notifications" element={<Lazy><FinancialNotifications /></Lazy>} />
+        <Route path="profile"      element={<Lazy><FinancialProfile /></Lazy>} />
+        <Route path="dev-requests"      element={<Lazy><DevRequests /></Lazy>} />
+        <Route path="dev-requests/:id"  element={<Lazy><DevRequestDetail /></Lazy>} />
+        <Route path="staff-messages"    element={<Lazy><StaffChannel /></Lazy>} />
+        <Route path="marvflow-messages" element={<Lazy><MarvflowInbox /></Lazy>} />
       </Route>
 
       {/* ── MARVFLOW TEAM DASHBOARD ──
@@ -366,37 +383,38 @@ export default function App() {
            areas above. Guarded by MarvflowRoute, which (unlike
            FinancialRoute) never admits an admin — see that guard's
            comment for why. */}
-      <Route path="/marvflow" element={<MarvflowRoute><MarvflowLayout /></MarvflowRoute>}>
+      <Route path="/marvflow" element={<MarvflowRoute><Lazy screen><MarvflowLayout /></Lazy></MarvflowRoute>}>
         <Route index                element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard"     element={<MarvflowDashboard />} />
-        <Route path="mailing"       element={<StaffMailing />} />
-        <Route path="news"          element={<StaffNews />} />
-        <Route path="requests"      element={<MarvflowRequests title="Requests" />} />
-        <Route path="urgent"        element={<MarvflowRequests title="Urgent Requests" forcedFilter={{ priority: 'urgent' }} />} />
-        <Route path="my-requests"   element={<MarvflowRequests title="My Assigned Requests" forcedFilter={{ assigned_to: 'me' }} />} />
-        <Route path="requests/:id"  element={<MarvflowRequestDetail />} />
-        <Route path="messages"      element={<MarvflowMessages />} />
-        <Route path="message-admin" element={<MarvflowMessages initialTab="direct" />} />
-        <Route path="team"          element={<MarvflowTeamMembers />} />
-        <Route path="notifications" element={<MarvflowNotifications />} />
-        <Route path="profile"       element={<MarvflowProfile />} />
+        <Route path="dashboard"     element={<Lazy><MarvflowDashboard /></Lazy>} />
+        <Route path="mailing"       element={<Lazy><StaffMailing /></Lazy>} />
+        <Route path="news"          element={<Lazy><StaffNews /></Lazy>} />
+        <Route path="requests"      element={<Lazy><MarvflowRequests title="Requests"/></Lazy>} />
+        <Route path="urgent"        element={<Lazy><MarvflowRequests title="Urgent Requests" forcedFilter={{ priority: 'urgent' }}/></Lazy>} />
+        <Route path="my-requests"   element={<Lazy><MarvflowRequests title="My Assigned Requests" forcedFilter={{ assigned_to: 'me' }}/></Lazy>} />
+        <Route path="requests/:id"  element={<Lazy><MarvflowRequestDetail /></Lazy>} />
+        <Route path="messages"      element={<Lazy><MarvflowMessages /></Lazy>} />
+        <Route path="message-admin" element={<Lazy><MarvflowMessages initialTab="direct"/></Lazy>} />
+        <Route path="team"          element={<Lazy><MarvflowTeamMembers /></Lazy>} />
+        <Route path="notifications" element={<Lazy><MarvflowNotifications /></Lazy>} />
+        <Route path="profile"       element={<Lazy><MarvflowProfile /></Lazy>} />
       </Route>
 
       {/* ── REGISTRATION TEAM DASHBOARD (Task 2) ── */}
-      <Route path="/registration" element={<RegistrationRoute><RegistrationLayout /></RegistrationRoute>}>
+      <Route path="/registration" element={<RegistrationRoute><Lazy screen><RegistrationLayout /></Lazy></RegistrationRoute>}>
         <Route index                    element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard"         element={<RegistrationDashboard />} />
-        <Route path="mailing"       element={<StaffMailing />} />
-        <Route path="news"          element={<StaffNews />} />
-        <Route path="applications"      element={<RegistrationApplications />} />
-        <Route path="applications/:id"  element={<RegistrationApplicationDetail />} />
-        <Route path="activity"          element={<RegistrationActivity />} />
-        <Route path="notifications"     element={<RegistrationNotifications />} />
-        <Route path="profile"           element={<RegistrationProfile />} />
+        <Route path="dashboard"         element={<Lazy><RegistrationDashboard /></Lazy>} />
+        <Route path="mailing"       element={<Lazy><StaffMailing /></Lazy>} />
+        <Route path="news"          element={<Lazy><StaffNews /></Lazy>} />
+        <Route path="applications"      element={<Lazy><RegistrationApplications /></Lazy>} />
+        <Route path="applications/:id"  element={<Lazy><RegistrationApplicationDetail /></Lazy>} />
+        <Route path="activity"          element={<Lazy><RegistrationActivity /></Lazy>} />
+        <Route path="notifications"     element={<Lazy><RegistrationNotifications /></Lazy>} />
+        <Route path="profile"           element={<Lazy><RegistrationProfile /></Lazy>} />
       </Route>
 
       {/* ── CATCH-ALL ── */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </ChunkErrorBoundary>
   );
 }

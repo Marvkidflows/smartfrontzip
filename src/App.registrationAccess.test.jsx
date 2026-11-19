@@ -2,8 +2,8 @@
 // Renders the REAL <App /> routes (real guards, real layouts) inside a MemoryRouter with a signed-in user of each role and checks where they land.
 // This is the frontend half of the permission matrix; the API enforces the same boundary independently (see the backend tests).
 // No network: every request is stubbed to fail (src/test/apiStub.js) — pages already handle that with an error state.
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act, within } from '@testing-library/react';
+import { describe, it, expect, beforeAll, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor, act, within, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import App from './App';
@@ -17,6 +17,19 @@ const U = {
   financial:  { id: 24, name: 'Fay Fin',     role: 'financial',           registration_stage: 4 },
   investor:   { id: 25, name: 'Ivy Investor', role: 'investor',           registration_stage: 4 },
 };
+
+// Pages and layouts are now code-split (React.lazy in App.jsx), so they arrive a moment after the route changes. Warm the module cache once
+// (the first dynamic import pays the transform cost) and give async queries a realistic timeout.
+configure({ asyncUtilTimeout: 10000 });
+beforeAll(async () => {
+  await Promise.all([
+    import('./layouts/RegistrationLayout'), import('./layouts/AdminLayout'), import('./layouts/FinancialLayout'), import('./layouts/InvestorLayout'),
+    import('./pages/registration/RegistrationDashboard'), import('./pages/registration/RegistrationApplications'),
+    import('./pages/registration/RegistrationActivity'), import('./pages/registration/RegistrationNotifications'), import('./pages/registration/RegistrationProfile'),
+    import('./pages/admin/AdminDashboard'), import('./pages/financial/FinancialDashboard'), import('./pages/investor/InvestorDashboard'),
+    import('./pages/public/LoginPage'),
+  ]);
+}, 120000);
 
 const REAL = { logout: useAuthStore.getState().logout, initializeAuth: useAuthStore.getState().initializeAuth };
 let net;
@@ -46,7 +59,7 @@ describe('Registration Team users — what they can reach', () => {
   it.each([['member', 'member'], ['lead', 'lead']])('a registration %s lands on the Registration Team dashboard', async (_l, key) => {
     renderApp('/registration/dashboard', U[key]);
     await expectPath('/registration/dashboard');
-    expect(screen.getByText('Registration Team Dashboard')).toBeInTheDocument();
+    expect(await screen.findByText('Registration Team Dashboard')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Back to Admin Dashboard/i })).not.toBeInTheDocument();
   });
 
@@ -62,7 +75,7 @@ describe('Registration Team users — what they can reach', () => {
   ])('a registration member requesting %s is redirected back to the Registration dashboard', async (path) => {
     renderApp(path, U.member);
     await expectPath('/registration/dashboard');
-    expect(screen.getByText('Registration Team Dashboard')).toBeInTheDocument();
+    expect(await screen.findByText('Registration Team Dashboard')).toBeInTheDocument();
   });
 
   it('a registration lead is kept out of the Admin and Financial areas as well', async () => {
@@ -78,7 +91,7 @@ describe('Everyone else is kept out of the Registration Team dashboard', () => {
   it('sends a signed-out visitor to the login page', async () => {
     renderApp('/registration/dashboard', null);
     await expectPath('/login');
-    expect(screen.getByText('Investor Login')).toBeInTheDocument();
+    expect(await screen.findByText('Investor Login')).toBeInTheDocument();
   });
 
   it('sends a Financial user back to the Financial dashboard', async () => {
@@ -98,19 +111,19 @@ describe('Admin — moving between the Admin dashboard and the Registration Team
     await expectPath('/admin/dashboard');
     await userEvent.click(await screen.findByRole('link', { name: 'Registration Team' }));
     await expectPath('/registration/dashboard');
-    expect(screen.getByText('Registration Team Dashboard')).toBeInTheDocument();
+    expect(await screen.findByText('Registration Team Dashboard')).toBeInTheDocument();
   });
 
   it('sees the "Back to Admin Dashboard" link there (the original bug: there was none)', async () => {
     renderApp('/registration/dashboard', U.admin);
     await expectPath('/registration/dashboard');
-    expect(screen.getAllByRole('link', { name: 'Back to Admin Dashboard' })).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByRole('link', { name: 'Back to Admin Dashboard' })).toHaveLength(2));
   });
 
   it('returns to the real Admin dashboard (with the full Admin sidebar) using the link', async () => {
     renderApp('/registration/applications', U.admin);
     await expectPath('/registration/applications');
-    const topbar = screen.getByRole('banner');
+    const topbar = await screen.findByRole('banner');
     await userEvent.click(within(topbar).getByRole('link', { name: 'Back to Admin Dashboard' }));
     await expectPath('/admin/dashboard');
     // the Admin layout (and its sidebar) is back, and the Registration shell is gone
@@ -143,9 +156,9 @@ describe('Logout from the Registration Team dashboard', () => {
     // the real store logout reloads the page (window.location), which a MemoryRouter cannot follow: swap in the same state change without the reload
     useAuthStore.setState({ logout: async () => { useAuthStore.setState({ user: null, isAuthenticated: false }); } });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Log out' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Log out' }));
     await expectPath('/login');
-    expect(screen.getByText('Investor Login')).toBeInTheDocument();
+    expect(await screen.findByText('Investor Login')).toBeInTheDocument();
     expect(screen.queryByText('Registration Team Dashboard')).not.toBeInTheDocument();
 
     await act(async () => { navigateRef('/registration/dashboard'); });

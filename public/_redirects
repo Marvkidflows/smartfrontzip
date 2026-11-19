@@ -1,0 +1,3 @@
+# Cloudflare Pages: single-page-app routing (replaces the Apache .htaccess rewrite, which Pages ignores).
+# Every path that is not a real file returns index.html so /admin/dashboard, /register?ref=... etc. work on refresh and direct links.
+/*  /index.html  200
